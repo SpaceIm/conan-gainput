@@ -37,6 +37,10 @@ class GainputConan(ConanFile):
         if self.options.shared:
             del self.options.fPIC
 
+    def requirements(self):
+        if self.settings.os == "Linux":
+            self.requires("xorg/system")
+
     def source(self):
         tools.get(**self.conan_data["sources"][self.version],
                   destination=self._source_subfolder, strip_root=True)
@@ -69,8 +73,6 @@ class GainputConan(ConanFile):
         self.cpp_info.libs = ["gainput" + suffix]
         if self.settings.os == "Windows":
             self.cpp_info.system_libs.extend(["xinput", "ws2_32"])
-            if self.options.shared:
-                self.cpp_info.defines.append("GAINPUT_LIB_DYNAMIC_USE")
         elif self.settings.os == "Android":
             self.cpp_info.system_libs.extend(["native_app_glue", "log", "android"])
         elif tools.is_apple_os(self.settings.os):
